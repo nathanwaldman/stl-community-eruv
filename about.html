@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>About the St. Louis Community Eruv — Historical journal</title>
+    <style>
+        :root {
+            --ink: #20201d;
+            --muted: #66645e;
+            --paper: #fffefb;
+            --green: #1f3529;
+            --green-soft: #e8efe9;
+            --gold: #b6882d;
+            --line: #ded8ca;
+            --donate: #FCBB32;
+            --donate-soft: #fdf2db;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            color: var(--ink);
+            background: #f5f2ea;
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.6;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        .page-shell {
+            width: min(1120px, calc(100% - 2rem));
+            margin: 0 auto;
+            padding: 1rem 0 4rem;
+        }
+
+        section {
+            scroll-margin-top: 1.5rem;
+        }
+
+        .section-nav {
+            position: fixed;
+            z-index: 10;
+            top: 50%;
+            right: 1rem;
+            transform: translateY(-50%);
+            display: grid;
+            gap: 0.55rem;
+            width: 11.5rem;
+            padding: 0.75rem;
+            background: rgba(255, 254, 251, 0.96);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(32, 32, 29, 0.12);
+        }
+
+        .section-nav a {
+            display: block;
+            padding: 0.65rem 0.75rem;
+            border-radius: 10px;
+            color: var(--green);
+            font-weight: 700;
+            line-height: 1.25;
+            text-decoration: none;
+        }
+
+        .section-nav a:hover,
+        .section-nav a:focus-visible {
+            background: var(--green-soft);
+            outline: 2px solid var(--green);
+            outline-offset: 1px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin: 0 0 1.5rem;
+            padding: 0.85rem 0.95rem;
+            border-radius: 14px;
+            background: var(--green-soft);
+            color: var(--green);
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .back-link:hover,
+        .back-link:focus-visible {
+            outline: 2px solid var(--green);
+            outline-offset: 2px;
+        }
+
+        .donate-section {
+            max-width: 23rem;
+            margin: 0 0 2rem;
+            scroll-margin-top: 1.5rem;
+        }
+
+        .donate-button {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            padding: 1rem 1.15rem;
+            border-radius: 14px;
+            background: var(--donate-soft);
+            cursor: pointer;
+        }
+
+        .donate-button:hover,
+        .donate-button:focus-visible {
+            outline: 2px solid var(--donate);
+        }
+
+        section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            margin: 0 0 1.5rem;
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: clamp(2rem, 5vw, 3.35rem);
+            line-height: 1.08;
+        }
+
+        .article-card {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: clamp(1.5rem, 5vw, 4rem);
+            background: var(--paper);
+            border: 1px solid var(--line);
+        }
+
+        .article-title {
+            margin: 0;
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: clamp(2rem, 5vw, 3.4rem);
+            line-height: 1.05;
+            font-weight: 500;
+        }
+
+        .article-source {
+            margin: 1rem 0 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--line);
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .article-body {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 1.08rem;
+            line-height: 1.78;
+        }
+
+        .article-body p {
+            margin: 0 0 1.35rem;
+        }
+
+        .article-body p:first-child::first-letter {
+            float: left;
+            margin: 0.08em 0.1em 0 0;
+            color: var(--green);
+            font-size: 4.2em;
+            line-height: 0.75;
+        }
+
+        @media (max-width: 1280px) {
+            .section-nav {
+                position: static;
+                transform: none;
+                display: flex;
+                flex-wrap: wrap;
+                width: auto;
+                margin: 0 0 1.5rem;
+                padding: 0.5rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .page-shell {
+                width: min(100% - 1rem, 1120px);
+                padding-top: 0.5rem;
+            }
+
+            .section-nav a {
+                flex: 1 1 10rem;
+                text-align: center;
+            }
+
+            .article-card {
+                padding: 1.25rem;
+            }
+        }
+
+        .history-panel {
+            padding: clamp(1rem, 4vw, 2.5rem);
+            background: #ebe4d5;
+            border: 1px solid #d0c3aa;
+        }
+
+        .timeline {
+            margin: 0;
+        }
+
+        .timeline-entry {
+            display: grid;
+            grid-template-columns: 9.5rem minmax(0, 1fr);
+            gap: 1.25rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid #c9bda7;
+        }
+
+        .timeline-entry:first-child {
+            padding-top: 0;
+        }
+
+        .timeline-entry:last-child {
+            padding-bottom: 0;
+            border-bottom: 0;
+        }
+
+        .timeline-date {
+            color: var(--green);
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            line-height: 1.45;
+        }
+
+        .timeline-text {
+            min-width: 0;
+        }
+
+        .timeline-text ul {
+            margin: 0.75rem 0 0;
+            padding-left: 1.25rem;
+        }
+
+        .timeline-text li {
+            margin: 0.35rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .timeline-entry {
+                grid-template-columns: 1fr;
+                gap: 0.25rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav aria-label="Page sections" class="section-nav">
+        <a href="index.html">← Back to map</a>
+        <a href="#donate-section">Donate</a>
+        <a href="#history-title">Creation Timeline</a>
+        <a href="#news-title">Eruv in the News</a>
+    </nav>
+    <main class="page-shell"><a class="back-link" href="index.html">← Back to map</a>
+
+        <div class="donate-section" id="donate-section" aria-label="Support the St. Louis Community Eruv">
+            <span id="donate-button" class="donate-button"></span>
+        </div>
+
+        <section aria-labelledby="history-title">
+            <h1 class="section-title" id="history-title">Creation Timeline</h1>
+            <div class="history-panel">
+                <div class="timeline">
+                    <div class="timeline-entry">
+                        <div class="timeline-date">10/25/93</div>
+                        <div class="timeline-text">Initial meeting to review prior efforts to obtain necessary approvals
+                            for a proposed St. Louis Community Eruv and to discuss plans to seek approvals necessary for
+                            a St. Louis Community Eruv.</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">11/18/93 - 12/13/93</div>
+                        <div class="timeline-text">Political Strategy Planning</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">11/20/93 - 12/30/93</div>
+                        <div class="timeline-text">Consultation with Jewish Community Relations Council (JCRC) and other
+                            advisors</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">11/17/93 - 3/5/94</div>
+                        <div class="timeline-text">Drafting, revising and editing of the Eruv Fact Sheet</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">11/1/93</div>
+                        <div class="timeline-text">Began investigation of Alternative Feasible Eruv Boundaries</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">11/17/93 - 2/28/94</div>
+                        <div class="timeline-text">Gather information concerning Eruvim in other communities</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">11/17/93 - 2/28/94</div>
+                        <div class="timeline-text">Gather information about electric and telephone utilities in other
+                            communities that assisted in developing an Eruv within their service areas.</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">11/17/93 - 2/28/94</div>
+                        <div class="timeline-text">Gather information from other cities with Eruvim concerning safety
+                            experience</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">12/14/93</div>
+                        <div class="timeline-text">JCRC Board Meeting and Endorsement of the Eruv</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">12/20/93</div>
+                        <div class="timeline-text">Incorporation of St. Louis Community Eruv, Inc.</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date"></div>
+                        <div class="timeline-text">Requesting and Obtaining Support &amp; Support Letters for the Eruv
+                            from:<ul>
+                                <li>U.S. Senator John Danforth 1/3/94</li>
+                                <li>U.S. Senator Christopher Bond 1/4/94</li>
+                                <li>U.S. House of Representatives - James Talent 1/25/94</li>
+                                <li>Missouri Senate - Wayne Goode 2/2/94</li>
+                                <li>Missouri House of Representatives - Ilene Ordower 1/27/94</li>
+                                <li>Missouri House of Representatives - Joan Bray 2/24/94</li>
+                                <li>Mayor of the City of Clayton 1/27/94</li>
+                                <li>Mayor of the City of Olivette 1/20/94</li>
+                                <li>Mayor of the City of Richmond Heights 1/27/94</li>
+                                <li>Mayor of the City of St. Louis 1/18/94</li>
+                                <li>Mayor of the City of University City 1/11/94</li>
+                                <li>Governor of Missouri 3/7/94</li>
+                                <li>Jewish Federation of St. Louis 1/20/94</li>
+                                <li>Jewish Community Relations Council 1/31/94</li>
+                                <li>St. Louis Rabbinical Association 2/25/94</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">2/10/94</div>
+                        <div class="timeline-text">Meeting with County Executive, Buzz Westfall, to request rental of
+                            St. Louis County for the Eruv</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">2/12/94</div>
+                        <div class="timeline-text">Discussions with Merle T. Welshans concerning how to approach Union
+                            Electric Company to obtain Union Electric Company's cooperation.</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">2/15/94 - 2/16/94</div>
+                        <div class="timeline-text">Inspection of the Eruv by Rabbi Shimon Eider and meeting with Rabbi
+                            Eider to discuss proposed Eruv and requirements concerning the Eruv</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">2/22/94</div>
+                        <div class="timeline-text">Meeting with County Executive, Buzz Westfall, to obtain Proclamation
+                            and enter into a contract with St. Louis County for the rental of St. Louis County for the
+                            Eruv</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">2/1/94 - 3/10/94</div>
+                        <div class="timeline-text">Preparation of proposals to Union Electric Company and Southwestern
+                            Bell Telephone Company</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">2/12/94</div>
+                        <div class="timeline-text">Letter to Charles W. Mueller, President of Union Electric Company
+                            from Merle T. Welshans regarding the proposed Eruv and the need for assistance of Union
+                            Electric Company</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">3/7/94</div>
+                        <div class="timeline-text">Meeting with Local 1439 International Brotherhood of Electrical
+                            Workers (IBEW)</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">3/9/94</div>
+                        <div class="timeline-text">Obtain support and safety confirmations from IBEW</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">3/11/94</div>
+                        <div class="timeline-text">Meeting with Local 6310 Communications Workers of America (CWA)</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">3/11/94</div>
+                        <div class="timeline-text">Letter from St. Louis Community Eruv, Inc. to Charles Mueller,
+                            President of Union Electric Company including the Proposal to Union Electric Company</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">3/14/94</div>
+                        <div class="timeline-text">Meeting with Union Electric Company concerning Proposal</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">3/14/94</div>
+                        <div class="timeline-text">Obtain support letter and safety confirmation from CWA</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">3/18/94</div>
+                        <div class="timeline-text">Conference with Union Electric Company to confirm agreement in
+                            principle with respect to the Eruv</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">3/18/94</div>
+                        <div class="timeline-text">Meeting with CWA and Mike Smith, Southwestern Bell Telephone Company,
+                            to request assistance of Southwestern Bell Telephone Company and review the Proposal</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">3/25/94</div>
+                        <div class="timeline-text">Conference with Mike Smith confirming approval of agreement in
+                            principle with Southwestern Bell Telephone Company permitting pole attachments for the Eruv
+                        </div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">3/31/94</div>
+                        <div class="timeline-text">Meeting with Union Electric Company concerning terms of approval of
+                            Pole License Agreement and related matters</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">4/1/94 - 5/31/94</div>
+                        <div class="timeline-text">Search for and examine alternative routes for Eruv boundary and
+                            review issues concerning poles, towers, fences, walls, creeks and other Eruv boundary
+                            features</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">4/13/94</div>
+                        <div class="timeline-text">Meet with Representatives of the Parkview neighborhood concerning
+                            closure at breaks in the Parkview neighborhood walls along Skinker</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">4/22/94</div>
+                        <div class="timeline-text">Meeting with Mayor Freeman Bosley, Jr. to request rental of the City
+                            of St. Louis for the Eruv and enter into contract with the Mayor for rental of the City of
+                            St. Louis for the Eruv.</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">6/20/94</div>
+                        <div class="timeline-text">Seed Money Campaign to pay planning expenses</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">6/1/94 - 7/10/94</div>
+                        <div class="timeline-text">Discussions with rabbis concerning questions and requirements for the
+                            Eruv boundaries</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">7/11/94</div>
+                        <div class="timeline-text">Visit with Rabbi Nathan Greenblatt to examine the Eruv and to review
+                            questions concerning Eruv requirements</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">7/12/94 - 7/31/94</div>
+                        <div class="timeline-text">Change and improve the Eruv Boundary</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">8/23/94</div>
+                        <div class="timeline-text">Determination of Proposed Revised Eruv Boundary</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">8/29/94</div>
+                        <div class="timeline-text">Meeting with Union Electric Company concerning Revised Eruv Boundary
+                            and Pole License Agreement</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">9/16/94</div>
+                        <div class="timeline-text">Obtain Commercial General Liability Insurance Coverage</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">9/16/94</div>
+                        <div class="timeline-text">Send Certificate of Insurance to Southwestern Bell Telephone Company
+                        </div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">9/18/94</div>
+                        <div class="timeline-text">Sign Pole License Agreement - Union Electric Company and send
+                            Certificate of Insurance and Pole License Fee to Union Electric Company</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">9/19/94</div>
+                        <div class="timeline-text">Conference with Mike Smith, Southwestern Bell Telephone Company
+                            concerning Eruv Boundary and permission to install pole attachments on telephone poles</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">9/23/94</div>
+                        <div class="timeline-text">Meeting with Local 1431 of the International Brotherhood of
+                            Electrical Workers to discuss construction of the Eruv</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">9/29/94</div>
+                        <div class="timeline-text">Meeting with Local 6310 of the Communications Workers of America to
+                            discuss construction of the Eruv</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">10/3/94 - 10/7/94</div>
+                        <div class="timeline-text">Planning for the installation of the pole attachments on the utility
+                            poles.</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">10/3/94 - 10/7/94</div>
+                        <div class="timeline-text">Preparing materials, equipment, maps and instructions for the
+                            construction of the Eruv.</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">10/6/94</div>
+                        <div class="timeline-text">Training of volunteers concerning the rules for the construction of a
+                            community Eruv.</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">10/9/94</div>
+                        <div class="timeline-text">Working with 29 volunteers from Local 1439 of the International
+                            Brotherhood of Electrical Workers and community volunteers to install pole attachments on
+                            the utility poles.</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">10/10/94</div>
+                        <div class="timeline-text">Meeting with the City Manager of Clayton to obtain permission to
+                            maintain a string in Oak Knoll Park from the west park fence to a utility pole in the park.
+                        </div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">10/16/94 - 10/30/94</div>
+                        <div class="timeline-text">Construction and installation of non-utility improvements along the
+                            Eruv boundary (strings, plexiglass and railroad ties)</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">10/20/94</div>
+                        <div class="timeline-text">Inspection of the Eruv boundaries by Rabbi Sholom Rivkin to confirm
+                            compliance with applicable requirements.</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">10/3/94 - 11/15/94</div>
+                        <div class="timeline-text">Raising funds to build, administer, operate, inspect, maintain and
+                            repair the Eruv.</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">11/3/94</div>
+                        <div class="timeline-text">Inspection of the Eruv by Rabbi Sholom Rivkin and Rabbi Nathan
+                            Greenblatt</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">11/6/94</div>
+                        <div class="timeline-text">Construction changes and alterations to the Eruv boundary</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">11/7/94</div>
+                        <div class="timeline-text">Additional pole attachments and alterations</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">11/8/94</div>
+                        <div class="timeline-text">Activating the Eruv telephone hotline</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">11/15/94</div>
+                        <div class="timeline-text">Inspection of the Eruv by Rabbi Sholom Rivkin and Rabbi Nathan
+                            Greenblatt</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">11/15/94</div>
+                        <div class="timeline-text">Approval of the Eruv by Rabbi Sholom Rivkin and announcements to the
+                            Community.</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">11/15/94</div>
+                        <div class="timeline-text">Posting of the Eruv Map in each of the synagogues within the Eruv.
+                        </div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">11/17/94 - 11/29/94</div>
+                        <div class="timeline-text">Inspection of Storm Water Channels</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">11/20/94</div>
+                        <div class="timeline-text">Additional pole attachments made and strings replaced with pole
+                            moulding and other attachments.</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">11/20/94 - 11/29/94</div>
+                        <div class="timeline-text">Closure of Storm Water Channels</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">11/29/94</div>
+                        <div class="timeline-text">Resolution of Golf Course Water Traps</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">11/30/94</div>
+                        <div class="timeline-text">Application for tax-exempt status filed with the IRS</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">11/30/94 - 12/1/94</div>
+                        <div class="timeline-text">Repairs, Adjustments and Inspection of the Eruv</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">12/4/94 - 12/6/94</div>
+                        <div class="timeline-text">Additional pole attachments, repairs, adjustments, tree trimming and
+                            inspections.</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">12/7/94 - 12/8/94</div>
+                        <div class="timeline-text">Change of boundary at northwest Olivette section of the Eruv to
+                            exclude unpaved portions of the storm water channel at railroad overpass east of Dielman
+                            Road west of Woodson and to use fences and utility poles for new boundary.</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">12/8/94</div>
+                        <div class="timeline-text">Tree trimming and inspections of the Eruv boundary.</div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">12/9/94</div>
+                        <div class="timeline-text">Tree trimming and inspections of North Price Road, transition from
+                            fence to utility pole, and transition from Dielman storm water channel to utility pole.
+                        </div>
+                    </div>
+                    <div class="timeline-entry">
+                        <div class="timeline-date">12/9/94 - 12/10/94</div>
+                        <div class="timeline-text">First Sabbath with a functioning Community Eruv (7th of Kislev -
+                            Parshat Vayigash)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section aria-labelledby="news-title">
+            <h1 class="section-title" id="news-title">Eruv in the News</h1>
+            <div class="article-card">
+                <h2 class="article-title">Rabbi hunts for disruptions in symbolic Jewish boundary</h2>
+                <div class="article-source">
+                    <div>By Todd C. Frankel</div>
+                    <div>Of the St. Louis Post-Dispatch</div>
+                    <div>04/08/2005</div>
+                </div>
+                <div class="article-body">
+                    <p>The rabbi removed his wide-brimmed black hat. He slipped on a white hard hat. He grabbed his
+                        binoculars and jumped out of the old green van.</p>
+                    <p>"This is where I got my surprise last week," said Rabbi Chona Muser as he stood before a busy
+                        MetroLink construction site and the pink stone campus of Washington University in St. Louis.</p>
+                    <p>Muser was hunting for the subtle signs that an important Orthodox Jewish boundary was intact,
+                        just as he has done every Thursday for the past decade. The symbolic 15-mile boundary, called an
+                        eruv, is made from a largely overlooked world of fences, utility poles, cable wires, power lines
+                        and plastic rope.</p>
+                    <p>Last week during his inspection, he spotted a serious problem with the boundary at the same spot
+                        where he stood now. And for the first time since it was created in 1994, the boundary was down
+                        on the Sabbath, disrupting life for Orthodox Jews in many ways. The eruv creates an area in
+                        which Orthodox Jews are allowed to perform tasks as basic as pushing a stroller that are
+                        otherwise banned outside on the Sabbath, a day intended for rest.</p>
+                    <p>Early Thursday morning under an overcast sky, Muser faced a new Sabbath and a new question: Had
+                        the eruv been fixed in time?</p>
+                    <p>Muser wore old pants and waterproof shoes for the inspection. Soon he would be climbing through
+                        people's back yards, slipping down runoff ditches and running up muddy hills for his job. It can
+                        be dangerous. He once fell and grabbed a beehive to catch himself, getting stung several times.
+                        He also carried a green toolbox in his van with the tools he might need: binoculars, tape
+                        measure, U-nails, hammer and plastic tubing. Just before 8 a.m., he set out from University
+                        City.</p>
+                    <p>Muser is responsible for the eastern half of the eruv. Another rabbi had already cleared the
+                        western portion for the Sabbath, which runs from sundown Friday to sundown Saturday.</p>
+                    <p>Without an eruv, transporting objects on the Sabbath is not allowed for Orthodox Jews, who follow
+                        a strict interpretation of the Torah. No pushing or carrying. No keys in pockets. Rabbi Hyim
+                        Shafner said the eruv's absence last week meant he carried a copy of his remarks and his prayer
+                        shawl to temple before the Sabbath began.</p>
+                    <p>The eruv transforms a private space out of a public one. "It is like a walled city," said Stuart
+                        Zimbalist, who helped create the eruv a decade ago. It makes it easier for mothers and young
+                        children to attend Saturday services and for families with young children to visit on the
+                        Sabbath. Most U.S. cities today contain at least one. In addition to the eruv covering parts of
+                        University City and three other St. Louis suburbs - and home to more than 1,000 Orthodox Jews -
+                        Chesterfield has a small one.</p>
+                    <p>"Not being able to carry something from inside to outside is a very unusual thing," Muser said as
+                        he drove. "It's a concept which is hard for people to understand."</p>
+                    <p>Muser pulled over next to a railroad crossing. He leaned forward in his seat and pointed to the
+                        high-voltage power lines passing overhead. The wires crossed over top of the tall steel supports
+                        - a perfect "T" essential for an eruv. This was the northern boundary. Muser and volunteers hunt
+                        for formations that resemble doorways, like this one, with the wire serving as a lintel over the
+                        posts.</p>
+                    <p>"If they were all like this, making an eruv would be no problem," Muser said.</p>
+                    <p>But utility poles, a common feature of city streets, tend to have wires attached at the side. So
+                        the eruv designers - who must be endlessly imaginative - focused on the thick black cable
+                        television wires that run about 16 feet off the ground. With the power company's blessing, gray
+                        plastic tubing was nailed to utility poles to form a doorway post. The remaining gaps were
+                        filled with plastic string.</p>
+                    <p>Muser estimated he encounters a problem every fourth inspection, usually with the plastic string.
+                        But it was always easy to remedy. Until last Thursday.</p>
+                    <p>Muser drove down Mehlville Alley toward the spot. Backyard fences here formed part of the eastern
+                        border until the alley meets the MetroLink work site. The boundary then jumps from fence to
+                        fence to plastic wire to cable wire, which carried on for 200 to 300 yards. It was stable for
+                        years. And then Muser discovered the cable wire was gone. It had been moved underground between
+                        inspections.</p>
+                    <p>"This was a big problem," he recalled.</p>
+                    <p>They tried finding other ways to route the boundary. Nothing worked. Last Friday afternoon, with
+                        just hours to spare, word spread through the religious schools and phone calls: The eruv was
+                        down. This Sabbath would be different.</p>
+                    <p>A fix was hammered out earlier this week, but Muser's approval still was needed.</p>
+                    <p>With his hard hat, Muser walked through the construction site. He rubbed his hands together as he
+                        looked for the eruv. The cable wire had been replaced by plastic rope hung from utility poles by
+                        a power lineman. Muser withheld judgment. He needed to see more.</p>
+                    <p>He got back in the van and drove down the road. He tried to pick out the thin, clear plastic rope
+                        against the gray sky. "I think when it's sunny it's easier to see," he said.</p>
+                    <p>As he drove, Muser said he believed what happened last Sabbath was a good thing, despite the
+                        disruption. Some Orthodox communities, he said, take down the eruv for one day each year to
+                        remind people of its presence. "It can't be taken for granted," he said.</p>
+                    <p>Muser neared the end of the area that caused so much trouble. The rest of the eruv would prove to
+                        be in good condition. If this area passed the test, the eruv would be back for this Sabbath. The
+                        boundary would be restored.</p>
+                    <p>"Last pole," he said finally. "Very good."</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://www.paypalobjects.com/donate/sdk/donate-sdk.js" charset="UTF-8"></script>
+    <script>
+        PayPal.Donation.Button({
+            env: 'production',
+            hosted_button_id: 'V9BS79RJYPC5L',
+            image: {
+                title: 'Please help support our eruv',
+                src: 'https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif',
+                alt: 'Donate with PayPal button',
+            }
+        }).render('#donate-button');
+
+        document.querySelector("#donate-button").onclick = function (event) {
+            if (event.target === this) {
+                this.querySelector("img")?.click();
+            }
+        };
+    </script>
+</body>
+
+</html>
