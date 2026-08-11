@@ -8,36 +8,33 @@
     <title>About the St. Louis Community Eruv — Historical journal</title>
     <style>
         :root {
-            --ink: #20201d;
-            --muted: #66645e;
-            --paper: #fffefb;
-            --green: #1f3529;
-            --green-soft: #e8efe9;
-            --gold: #b6882d;
-            --line: #ded8ca;
-            --donate: #FCBB32;
-            --donate-soft: #fdf2db;
+            --ink: #1f241f;
+            --muted: #676b64;
+            --paper: #fffdf8;
+            --page: #f3efe6;
+            --accent: #254a37;
+            --accent-soft: #e8efe9;
+            --warm: #efe4cf;
+            --line: #d9d2c5;
+            --donate: #f6c24a;
+            --radius: 16px;
+            --shadow: 0 10px 30px rgba(31, 36, 31, 0.08);
+            --content: 900px;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
-        html {
-            scroll-behavior: smooth;
-        }
+        html { scroll-behavior: smooth; }
 
         body {
             margin: 0;
             color: var(--ink);
-            background: #f5f2ea;
+            background: var(--page);
             font-family: Arial, Helvetica, sans-serif;
-            line-height: 1.6;
+            line-height: 1.65;
         }
 
-        a {
-            color: inherit;
-        }
+        a { color: var(--accent); }
 
         .page-shell {
             width: min(1120px, calc(100% - 2rem));
@@ -45,105 +42,96 @@
             padding: 1rem 0 4rem;
         }
 
-        section {
-            scroll-margin-top: 1.5rem;
-        }
-
         .section-nav {
-            position: fixed;
-            z-index: 10;
-            top: 50%;
-            right: 1rem;
-            transform: translateY(-50%);
-            display: grid;
-            gap: 0.55rem;
-            width: 11.5rem;
-            padding: 0.75rem;
-            background: rgba(255, 254, 251, 0.96);
-            border: 1px solid var(--line);
-            border-radius: 14px;
-            box-shadow: 0 10px 30px rgba(32, 32, 29, 0.12);
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+            width: min(1120px, calc(100% - 2rem));
+            margin: 0 auto;
+            padding: 0.75rem 0;
+            background: var(--page);
+            border-bottom: 1px solid var(--line);
         }
 
         .section-nav a {
-            display: block;
-            padding: 0.65rem 0.75rem;
-            border-radius: 10px;
-            color: var(--green);
+            padding: 0.65rem 0.8rem;
+            border-radius: 999px;
             font-weight: 700;
-            line-height: 1.25;
             text-decoration: none;
         }
 
         .section-nav a:hover,
         .section-nav a:focus-visible {
-            background: var(--green-soft);
-            outline: 2px solid var(--green);
+            background: var(--accent-soft);
+            outline: 2px solid var(--accent);
             outline-offset: 1px;
         }
 
-        .back-link {
-            display: inline-block;
-            margin: 0 0 1.5rem;
-            padding: 0.85rem 0.95rem;
-            border-radius: 14px;
-            background: var(--green-soft);
-            color: var(--green);
-            font-weight: 700;
-            text-decoration: none;
-        }
-
-        .back-link:hover,
-        .back-link:focus-visible {
-            outline: 2px solid var(--green);
-            outline-offset: 2px;
-        }
-
+        main > section,
         .donate-section {
-            max-width: 23rem;
-            margin: 0 0 2rem;
-            scroll-margin-top: 1.5rem;
+            max-width: var(--content);
+            margin: 0 auto 3.5rem;
         }
 
-        .donate-button {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-            padding: 1rem 1.15rem;
-            border-radius: 14px;
-            background: var(--donate-soft);
-            cursor: pointer;
-        }
-
-        .donate-button:hover,
-        .donate-button:focus-visible {
-            outline: 2px solid var(--donate);
-        }
-
-        section {
-            margin-bottom: 3rem;
-        }
-
-        .section-title {
-            margin: 0 0 1.5rem;
+        main > section > h1 {
+            margin: 0 0 1.25rem;
+            color: var(--accent);
             font-family: Georgia, 'Times New Roman', serif;
-            font-size: clamp(2rem, 5vw, 3.35rem);
+            font-size: clamp(2rem, 5vw, 3.2rem);
             line-height: 1.08;
+            scroll-margin-top: 5.5rem;
         }
 
-        .article-card {
-            max-width: 780px;
-            margin: 0 auto;
-            padding: clamp(1.5rem, 5vw, 4rem);
+        .card {
+            padding: clamp(1.4rem, 4vw, 2.75rem);
             background: var(--paper);
             border: 1px solid var(--line);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
         }
+
+        .card h2 {
+            margin: 2rem 0 0.65rem;
+            color: var(--accent);
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 1.45rem;
+            line-height: 1.2;
+        }
+
+        .card > h2:first-child { margin-top: 0; }
+        .card p { margin: 0 0 1.1rem; }
+        .card > :last-child { margin-bottom: 0; }
+        .card a { font-weight: 700; }
+
+        .timeline-entry {
+            display: grid;
+            grid-template-columns: 9.5rem minmax(0, 1fr);
+            gap: 1.25rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .timeline-entry:first-child { padding-top: 0; }
+        .timeline-entry:last-child { padding-bottom: 0; border-bottom: 0; }
+
+        .timeline-date {
+            color: var(--accent);
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            line-height: 1.45;
+        }
+
+        .timeline-text { min-width: 0; }
+        .timeline-text ul { margin: 0.75rem 0 0; padding-left: 1.25rem; }
+        .timeline-text li { margin: 0.35rem 0; }
 
         .article-title {
             margin: 0;
-            font-family: Georgia, 'Times New Roman', serif;
-            font-size: clamp(2rem, 5vw, 3.4rem);
-            line-height: 1.05;
+            color: var(--ink);
+            font-size: clamp(1.8rem, 4vw, 3rem);
             font-weight: 500;
         }
 
@@ -157,38 +145,53 @@
 
         .article-body {
             font-family: Georgia, 'Times New Roman', serif;
-            font-size: 1.08rem;
-            line-height: 1.78;
+            font-size: 1.07rem;
+            line-height: 1.8;
         }
 
-        .article-body p {
-            margin: 0 0 1.35rem;
-        }
+        .article-body p { margin-bottom: 1.35rem; }
 
         .article-body p:first-child::first-letter {
             float: left;
             margin: 0.08em 0.1em 0 0;
-            color: var(--green);
-            font-size: 4.2em;
+            color: var(--accent);
+            font-size: 4em;
             line-height: 0.75;
         }
 
-        @media (max-width: 1280px) {
-            .section-nav {
-                position: static;
-                transform: none;
-                display: flex;
-                flex-wrap: wrap;
-                width: auto;
-                margin: 0 0 1.5rem;
-                padding: 0.5rem;
-            }
+        .donate-section {
+            padding: 1rem;
+            background: var(--warm);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            scroll-margin-top: 5.5rem;
+        }
+
+        .donate-button {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            padding: 1rem 1.15rem;
+            border-radius: 12px;
+            background: #fff8e8;
+            cursor: pointer;
+        }
+
+        .donate-button:hover,
+        .donate-button:focus-visible {
+            outline: 2px solid var(--donate);
+            outline-offset: 2px;
         }
 
         @media (max-width: 640px) {
-            .page-shell {
+            .page-shell,
+            .section-nav {
                 width: min(100% - 1rem, 1120px);
-                padding-top: 0.5rem;
+            }
+
+            .section-nav {
+                gap: 0.3rem;
             }
 
             .section-nav a {
@@ -196,59 +199,11 @@
                 text-align: center;
             }
 
-            .article-card {
-                padding: 1.25rem;
+            main > section > h1,
+            .donate-section {
+                scroll-margin-top: 11rem;
             }
-        }
 
-        .history-panel {
-            padding: clamp(1rem, 4vw, 2.5rem);
-            background: #ebe4d5;
-            border: 1px solid #d0c3aa;
-        }
-
-        .timeline {
-            margin: 0;
-        }
-
-        .timeline-entry {
-            display: grid;
-            grid-template-columns: 9.5rem minmax(0, 1fr);
-            gap: 1.25rem;
-            padding: 1rem 0;
-            border-bottom: 1px solid #c9bda7;
-        }
-
-        .timeline-entry:first-child {
-            padding-top: 0;
-        }
-
-        .timeline-entry:last-child {
-            padding-bottom: 0;
-            border-bottom: 0;
-        }
-
-        .timeline-date {
-            color: var(--green);
-            font-weight: 700;
-            font-variant-numeric: tabular-nums;
-            line-height: 1.45;
-        }
-
-        .timeline-text {
-            min-width: 0;
-        }
-
-        .timeline-text ul {
-            margin: 0.75rem 0 0;
-            padding-left: 1.25rem;
-        }
-
-        .timeline-text li {
-            margin: 0.35rem 0;
-        }
-
-        @media (max-width: 640px) {
             .timeline-entry {
                 grid-template-columns: 1fr;
                 gap: 0.25rem;
@@ -260,19 +215,44 @@
 <body>
     <nav aria-label="Page sections" class="section-nav">
         <a href="index.html">← Back to map</a>
-        <a href="#donate-section">Donate</a>
-        <a href="#history-title">Creation Timeline</a>
+        <a href="#contact-title">Contact us</a>
+        <a href="#why-an-eruv-title">Why an eruv?</a>
+        <a href="#history-title">When was the eruv built?</a>
         <a href="#news-title">Eruv in the News</a>
+        <a href="#donate-section">Donate</a>
     </nav>
-    <main class="page-shell"><a class="back-link" href="index.html">← Back to map</a>
+    <main class="page-shell">
 
-        <div class="donate-section" id="donate-section" aria-label="Support the St. Louis Community Eruv">
-            <span id="donate-button" class="donate-button"></span>
-        </div>
+        <section aria-labelledby="contact-title">
+            <h1 id="contact-title">Contact us</h1>
+            <div class="card">
+                <p>We welcome feedback, questions, and suggestions about the St. Louis Community Eruv.</p>
+                <p>Email us at <a href="mailto:stleruv@mailfence.com">stleruv@mailfence.com</a>.</p>
+            </div>
+        </section>
+        <section aria-labelledby="why-an-eruv-title">
+            <h1 id="why-an-eruv-title">Why an eruv?</h1>
+            <div class="card">
+                <h2>A Community Eruv</h2>
+                <p>Every Friday night at sundown thousands of Jews in St. Louis and millions throughout the world begin celebrating the Sabbath. The Sabbath is a time of communal prayer, rest, study, and relaxation with family and friends.</p>
+                <p>One of the Sabbath laws derived from the Bible is a prohibition, as observed by traditional Jews, against performing work on the Sabbath. This prohibition includes the carrying of objects. The recognized exception to the prohibition against carrying is carrying within a private area‑‑defined as an area with set borders surrounded by a wall. In the ancient past, cities and neighborhoods were enclosed by walls, and the entire city or neighborhood was considered as one large private area. Accordingly, carrying was allowed on the Sabbath within these cities or neighborhoods. In the absence of a walled city or neighborhood, many communities throughout the world have established, pursuant to Jewish law, a symbolic wall called an "eruv" to surround the community for the sole purpose of permitting, within the eruv, carrying on the Sabbath.</p>
+
+                <h2>What is an eruv?</h2>
+                <p>An eruv is a symbolic enclosure that surrounds the Jewish community. Under Jewish law, carrying on the Sabbath is allowed within the eruv because the entire area within the eruv is considered as if a single property. An eruv may consist of natural boundaries such as a river bank or of walls, fences, buildings, or hedges. It can also consist of designated utility poles and wires (electric, telephone and/or cable) or strings, as long as the perimeter of the community eruv is uninterrupted.</p>
+
+                <h2>Why is an eruv important to the Jewish community?</h2>
+                <p>The celebration of the Sabbath is a communal celebration. Traditional families do not drive, but walk together to synagogue for prayers, and then gather to eat, visit, and study with family and friends.</p>
+                <p>In the absence of an eruv, children cannot be carried or pushed in stroller to synagogue or other family activities.</p>
+                <p>People requiring wheelchairs, walkers, crutches or canes cannot use these outside their homes. Those who take medication frequently must stay home because they cannot carry their medication with them.</p>
+                <p>Without an eruv there is a significant diminution of the enjoyment of the Sabbath for the entire community. Those with disabilities, and families with infants and small children are especially affected.</p>
+                <p>In communities with an eruv, families are permitted to carry or take their small children in strollers to the synagogue, homes of grandparents and friends, or even to the park for a swing. People with disabilities are able to use their wheelchairs and other devices. Families and people with disabilities can celebrate and enjoy the Sabbath with the community.</p>
+                <p>An eruv not only enhances the quality of life in the Jewish community, but also makes the community much more attractive to those considering relocating to a new community. For many young couples, the presence of an eruv is key to their decision of where to live and raise a family.</p>
+            </div>
+        </section>
 
         <section aria-labelledby="history-title">
-            <h1 class="section-title" id="history-title">Creation Timeline</h1>
-            <div class="history-panel">
+            <h1 id="history-title">When was the eruv built?</h1>
+            <div class="card">
                 <div class="timeline">
                     <div class="timeline-entry">
                         <div class="timeline-date">10/25/93</div>
@@ -621,9 +601,11 @@
                 </div>
             </div>
         </section>
+
+
         <section aria-labelledby="news-title">
-            <h1 class="section-title" id="news-title">Eruv in the News</h1>
-            <div class="article-card">
+            <h1 id="news-title">Eruv in the News</h1>
+            <div class="card">
                 <h2 class="article-title">Rabbi hunts for disruptions in symbolic Jewish boundary</h2>
                 <div class="article-source">
                     <div>By Todd C. Frankel</div>
@@ -704,6 +686,13 @@
                 </div>
             </div>
         </section>
+
+        <div class="donate-section" id="donate-section" aria-label="Support the St. Louis Community Eruv">
+            <span id="donate-button" class="donate-button"></span>
+        </div>
+
+
+
     </main>
 
     <script src="https://www.paypalobjects.com/donate/sdk/donate-sdk.js" charset="UTF-8"></script>

@@ -1,17 +1,14 @@
-- Put pages in subdirectory and report github pages to it
-- Check if there are built-in analytics
-- Add R' Hershey's suggestions: "What is an eruv", "Contact Us"
-- See if we can have a simpler printable map.
-
-- Host on GitHub Pages
-- Get permission from Young Israel for using coordinates
-- Get authoritative review of modified section
-- Label shuls
-- Host on stleruv.org (need credentials)
-- Create simpler printable map
-- Broadcast site to shuls
-- Add link to sign up to mailchimp
-- Link to mailchimp announcement about eruv kashrut (need mailchimp campaign)
-- Link to Chesterfield Eruv
-- Make site mobile friendly
-- Pictures of the eruv labeled on site
+[x] Host on GitHub Pages
+[x] Add Contact Us section
+[x] Add Why an Eruv section
+[] Get permission from Young Israel for using coordinates
+[] Get authoritative review of modified section
+[] Label shuls
+[] Host on stleruv.org (need credentials)
+[] Create simpler printable map
+[] Broadcast site to shuls
+[] Add link to sign up to mailchimp
+[] Link to mailchimp announcement about eruv kashrut (need mailchimp campaign)
+[] Link to Chesterfield Eruv
+[] Make site mobile friendly
+[] Pictures of the eruv labeled on site
