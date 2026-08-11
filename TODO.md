@@ -1,3 +1,8 @@
+- Put pages in subdirectory and report github pages to it
+- Check if there are built-in analytics
+- Add R' Hershey's suggestions: "What is an eruv", "Contact Us"
+- See if we can have a simpler printable map.
+
 - Host on GitHub Pages
 - Get permission from Young Israel for using coordinates
 - Get authoritative review of modified section
