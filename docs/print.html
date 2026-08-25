@@ -186,12 +186,33 @@
             aspect-ratio: auto;
         }
 
-        .print-button {
+        .map-actions {
             position: fixed;
             top: 10px;
             right: 10px;
             z-index: 10;
+            display: flex;
+            gap: 8px;
+        }
+
+        .map-actions a,
+        .map-actions button {
             padding: 8px 13px;
+            border: 1px solid #9ba3aa;
+            border-radius: 4px;
+            background: #fff;
+            color: #001a33;
+            font: inherit;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .map-actions a:hover,
+        .map-actions a:focus-visible,
+        .map-actions button:hover,
+        .map-actions button:focus-visible {
+            outline: 2px solid #001a33;
+            outline-offset: 1px;
         }
 
         @page {
@@ -214,7 +235,7 @@
                 padding: 0;
             }
 
-            .print-button {
+            .map-actions {
                 display: none;
             }
 
@@ -291,9 +312,10 @@
 </head>
 
 <body>
-    <button class="print-button" onclick="printMap()">
-        Print map
-    </button>
+    <nav class="map-actions" aria-label="Map actions">
+        <a href="index.html">← Back to interactive map</a>
+        <button type="button" onclick="printMap()">Print map</button>
+    </nav>
 
     <div class="print-sheet">
         <h1>St. Louis Community Eruv</h1>
