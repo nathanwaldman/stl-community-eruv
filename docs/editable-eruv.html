@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <title>Editable Eruv Boundary Map</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        .panel {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 1000;
+            width: 430px;
+            max-width: calc(100vw - 24px);
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+        }
+
+        .panel h2 {
+            margin: 0 0 8px;
+            font-size: 16px;
+        }
+
+        .panel p {
+            margin: 0 0 8px;
+            font-size: 13px;
+            line-height: 1.35;
+        }
+
+        #coordsOutput {
+            width: 100%;
+            height: 280px;
+            box-sizing: border-box;
+            font-family: Consolas, Monaco, monospace;
+            font-size: 12px;
+            resize: vertical;
+        }
+
+        button {
+            margin-top: 8px;
+            margin-right: 6px;
+            padding: 8px 10px;
+            cursor: pointer;
+        }
+
+        button.active {
+            background: #111;
+            color: white;
+        }
+
+        .vertex-handle {
+            width: 12px;
+            height: 12px;
+            background: white;
+            border: 2px solid #111;
+            border-radius: 50%;
+        }
+
+        .midpoint-handle {
+            width: 10px;
+            height: 10px;
+            background: #1a73e8;
+            border: 2px solid white;
+            border-radius: 50%;
+            opacity: 0.85;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <div class="panel">
+        <h2>Editable Boundary Coordinates</h2>
+
+        <p>
+            Drag white points to adjust the boundary. Click blue midpoint handles to add a point.
+            Enable remove mode, then click a white point to delete it.
+        </p>
+
+        <button id="removeModeBtn">Remove Point Mode: Off</button>
+        <button id="copyCoords">Copy Coordinates</button>
+
+        <textarea id="coordsOutput" spellcheck="false"></textarea>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="eruv-boundary.js"></script>
+
+    <script>
+        let boundaryCoords = window.ERUV_BOUNDARY
+
+        const map = L.map("map");
+
+        L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            maxZoom: 19,
+            referrerPolicy: "strict-origin-when-cross-origin",
+            attribution:
+                '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        const boundary = L.polygon(boundaryCoords, {
+            color: "#000000",
+            weight: 4,
+            opacity: 0.9,
+            fillColor: "#000000",
+            fillOpacity: 0.08
+        }).addTo(map);
+
+        const vertexLayer = L.layerGroup().addTo(map);
+        const midpointLayer = L.layerGroup().addTo(map);
+
+        let removeMode = false;
+
+        const vertexIcon = L.divIcon({
+            className: "",
+            html: '<div class="vertex-handle"></div>',
+            iconSize: [16, 16],
+            iconAnchor: [8, 8]
+        });
+
+        const midpointIcon = L.divIcon({
+            className: "",
+            html: '<div class="midpoint-handle"></div>',
+            iconSize: [14, 14],
+            iconAnchor: [7, 7]
+        });
+
+        function roundCoord(value) {
+            return Number(value.toFixed(6));
+        }
+
+        function setBoundary() {
+            boundary.setLatLngs(boundaryCoords);
+        }
+
+        function getMidpoint(a, b) {
+            return [
+                roundCoord((a[0] + b[0]) / 2),
+                roundCoord((a[1] + b[1]) / 2)
+            ];
+        }
+
+        function renderHandles() {
+            vertexLayer.clearLayers();
+            midpointLayer.clearLayers();
+
+            boundaryCoords.forEach((coord, index) => {
+                const marker = L.marker(coord, {
+                    icon: vertexIcon,
+                    draggable: true,
+                    title: `Point ${index + 1}`
+                });
+
+                marker.on("drag", event => {
+                    const latLng = event.target.getLatLng();
+
+                    boundaryCoords[index] = [
+                        roundCoord(latLng.lat),
+                        roundCoord(latLng.lng)
+                    ];
+
+                    setBoundary();
+                    updateCoordsOutput();
+                });
+
+                marker.on("dragend", () => {
+                    renderHandles();
+                    updateCoordsOutput();
+                });
+
+                marker.on("click", () => {
+                    if (!removeMode) return;
+
+                    if (boundaryCoords.length <= 3) {
+                        alert("A polygon needs at least 3 points.");
+                        return;
+                    }
+
+                    boundaryCoords.splice(index, 1);
+                    setBoundary();
+                    renderHandles();
+                    updateCoordsOutput();
+                });
+
+                marker.addTo(vertexLayer);
+            });
+
+            boundaryCoords.forEach((coord, index) => {
+                const nextIndex = (index + 1) % boundaryCoords.length;
+                const nextCoord = boundaryCoords[nextIndex];
+                const midpoint = getMidpoint(coord, nextCoord);
+
+                const midpointMarker = L.marker(midpoint, {
+                    icon: midpointIcon,
+                    title: `Add point between ${index + 1} and ${nextIndex + 1}`
+                });
+
+                midpointMarker.on("click", () => {
+                    boundaryCoords.splice(index + 1, 0, midpoint);
+                    setBoundary();
+                    renderHandles();
+                    updateCoordsOutput();
+                });
+
+                midpointMarker.addTo(midpointLayer);
+            });
+        }
+
+        function updateCoordsOutput() {
+            document.getElementById("coordsOutput").value =
+                "let boundaryCoords = " +
+                JSON.stringify(boundaryCoords, null, 2)
+                    .replace(/\[\n\s+([-0-9.]+),\n\s+([-0-9.]+)\n\s+\]/g, "[$1, $2]") +
+                ";";
+        }
+
+        document.getElementById("removeModeBtn").addEventListener("click", () => {
+            removeMode = !removeMode;
+
+            const button = document.getElementById("removeModeBtn");
+
+            if (removeMode) {
+                button.textContent = "Remove Point Mode: On";
+                button.classList.add("active");
+            } else {
+                button.textContent = "Remove Point Mode: Off";
+                button.classList.remove("active");
+            }
+        });
+
+        document.getElementById("copyCoords").addEventListener("click", async () => {
+            const text = document.getElementById("coordsOutput").value;
+
+            try {
+                await navigator.clipboard.writeText(text);
+                alert("Coordinates copied.");
+            } catch (error) {
+                const textarea = document.getElementById("coordsOutput");
+                textarea.select();
+                document.execCommand("copy");
+                alert("Coordinates copied.");
+            }
+        });
+
+        setBoundary();
+        renderHandles();
+        updateCoordsOutput();
+
+        map.fitBounds(boundary.getBounds(), {
+            padding: [30, 30]
+        });
+    </script>
+</body>
+
+</html>
