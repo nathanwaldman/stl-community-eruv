@@ -13,16 +13,177 @@
         body {
             margin: 0;
             font-family: Arial, sans-serif;
+            background: #f4f3ef;
+        }
+
+        body {
+            padding: 16px;
+        }
+
+        .print-sheet {
+            max-width: 1300px;
+            margin: 0 auto;
         }
 
         h1 {
+            margin: 0 0 12px;
             text-align: center;
-            font-size: 20px;
+            font-size: 22px;
+            color: #001a33;
+        }
+
+        .map-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 250px;
+            gap: 18px;
+            align-items: stretch;
         }
 
         #map {
             width: 100%;
-            height: calc(100vh - 80px);
+            aspect-ratio: 1.335 / 1;
+            min-height: 500px;
+            border: 1px solid #9ba3aa;
+            box-sizing: border-box;
+            background: #faf9f4;
+        }
+
+        .legend {
+            padding: 16px;
+            border: 1px solid #aab0b5;
+            border-radius: 8px;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0, 26, 51, 0.08);
+            box-sizing: border-box;
+        }
+
+        .legend h2 {
+            padding-bottom: 8px;
+            border-bottom: 2px solid #001a33;
+            color: #001a33;
+            font-size: 18px;
+        }
+
+        .legend-note {
+            margin: 7px 0 13px;
+            color: #62686d;
+            font-size: 12px;
+            line-height: 1.3;
+        }
+
+        .legend ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .legend li {
+            display: grid;
+            grid-template-columns: 28px minmax(0, 1fr);
+            gap: 8px;
+            align-items: center;
+            margin: 0;
+            padding: 7px 0;
+            border-bottom: 1px solid #e3e5e6;
+            line-height: 1.2;
+        }
+
+        .legend li:last-child {
+            border-bottom: 0;
+        }
+
+        .legend-number {
+            display: inline-flex;
+            width: 26px;
+            height: 26px;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            background: #001a33;
+            color: #fff;
+            box-shadow: 0 0 0 1px #001a33;
+            font-size: 12px;
+            font-weight: bold;
+            box-sizing: border-box;
+        }
+
+        .legend-name {
+            font-size: 14px;
+        }
+
+        .shul-marker-anchor {
+            position: relative;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+        }
+
+        .shul-marker-line {
+            position: absolute;
+            left: 0;
+            top: -1px;
+            z-index: 0;
+            display: none;
+            height: 2px;
+            background: #001a33;
+            transform-origin: left center;
+        }
+
+        .shul-marker-dot {
+            position: absolute;
+            left: -2px;
+            top: -2px;
+            z-index: 1;
+            display: none;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #001a33;
+        }
+
+        .shul-marker-bubble {
+            position: absolute;
+            left: -14px;
+            top: -14px;
+            z-index: 2;
+            display: flex;
+            width: 28px;
+            height: 28px;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            background: #001a33;
+            color: #fff;
+            box-shadow: 0 0 0 1px #001a33;
+            font-size: 12px;
+            font-weight: bold;
+            line-height: 1;
+            box-sizing: border-box;
+        }
+
+        /* Applied before print preview opens so MapLibre can resize first. */
+        html.printing .print-sheet {
+            width: 10.5in;
+            height: 7.5in;
+            margin: 0 auto;
+            padding-top: 0.25in;
+            box-sizing: border-box;
+        }
+
+        html.printing .map-layout {
+            grid-template-columns: 8.28in 2.05in;
+            gap: 0.17in;
+            width: 10.5in;
+            height: 6.2in;
+        }
+
+        html.printing #map {
+            width: 8.28in;
+            height: 6.2in;
+            min-height: 0;
+            aspect-ratio: auto;
         }
 
         .print-button {
@@ -30,32 +191,122 @@
             top: 10px;
             right: 10px;
             z-index: 10;
+            padding: 8px 13px;
         }
 
         @page {
             size: landscape;
-            margin: 0.3in;
+            margin: 0.25in;
         }
 
         @media print {
+            html,
+            body {
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                background: #fff;
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+
+            body {
+                padding: 0;
+            }
+
             .print-button {
                 display: none;
             }
 
+            .print-sheet {
+                width: 10.5in;
+                height: 7.5in;
+                margin: 0 auto;
+                padding-top: 0.25in;
+                overflow: hidden;
+                box-sizing: border-box;
+                break-inside: avoid;
+                page-break-inside: avoid;
+                page-break-after: avoid;
+            }
+
+            h1 {
+                height: 0.35in;
+                margin: 0 0 0.12in;
+                font-size: 18pt;
+                line-height: 0.35in;
+            }
+
+            .map-layout {
+                grid-template-columns: 8.28in 2.05in;
+                gap: 0.17in;
+                width: 10.5in;
+                height: 6.2in;
+            }
+
             #map {
-                height: 7in;
+                width: 8.28in;
+                height: 6.2in;
+                min-height: 0;
+                aspect-ratio: auto;
+            }
+
+            .legend {
+                width: 2.05in;
+                height: 6.2in;
+                padding: 0.14in;
+                border-radius: 0.06in;
+                box-shadow: none;
+                overflow: hidden;
+            }
+
+            .legend h2 {
+                padding-bottom: 0.06in;
+                font-size: 13pt;
+                margin-bottom: 100px;
+            }
+
+            .legend-note {
+                margin: 0.05in 0 0.08in;
+                font-size: 8.5pt;
+            }
+
+            .legend li {
+                grid-template-columns: 0.25in minmax(0, 1fr);
+                gap: 0.07in;
+                padding: 0.055in 0;
+            }
+
+            .legend-number {
+                width: 0.23in;
+                height: 0.23in;
+                font-size: 8.5pt;
+            }
+
+            .legend-name {
+                font-size: 9pt;
             }
         }
     </style>
 </head>
 
 <body>
-    <button class="print-button" onclick="window.print()">
+    <button class="print-button" onclick="printMap()">
         Print map
     </button>
 
-    <h1>St. Louis Community Eruv</h1>
-    <div id="map"></div>
+    <div class="print-sheet">
+        <h1>St. Louis Community Eruv</h1>
+
+        <main class="map-layout">
+            <div id="map"></div>
+
+            <aside class="legend" aria-labelledby="shul-legend-title">
+                <h2 id="shul-legend-title">Shuls within the Eruv</h2>
+                <ul id="shul-list"></ul>
+            </aside>
+        </main>
+    </div>
 
     <script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
     <script src="eruv-boundary.js"></script>
@@ -67,113 +318,118 @@
         // GeoJSON polygons must explicitly close the ring.
         polygonCoordinates.push(polygonCoordinates[0]);
 
-        const printStyle = {
-            version: 8,
+        const eruvBounds = new maplibregl.LngLatBounds();
+        polygonCoordinates.forEach(coord => eruvBounds.extend(coord));
 
-            sources: {
-                openmaptiles: {
-                    type: "vector",
-                    url: "https://tiles.openfreemap.org/planet"
-                }
-            },
+        const sortedShuls = [...window.SHULS].sort((a, b) =>
+            a.name.localeCompare(b.name)
+        );
 
-            glyphs: "https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf",
+        const shulList = document.querySelector("#shul-list");
+        sortedShuls.forEach((shul, index) => {
+            const item = document.createElement("li");
 
-            layers: [
-                {
-                    id: "background",
-                    type: "background",
-                    paint: {
-                        "background-color": "#faf9f4"
-                    }
-                },
-                {
-                    id: "parks",
-                    type: "fill",
-                    source: "openmaptiles",
-                    "source-layer": "park",
-                    paint: {
-                        "fill-color": "#e8efe5"
-                    }
-                },
-                {
-                    id: "water",
-                    type: "fill",
-                    source: "openmaptiles",
-                    "source-layer": "water",
-                    paint: {
-                        "fill-color": "#dbeaf0"
-                    }
-                },
-                {
-                    id: "local-roads",
-                    type: "line",
-                    source: "openmaptiles",
-                    "source-layer": "transportation",
-                    filter: [
-                        "match",
-                        ["get", "class"],
-                        ["tertiary", "minor"],
-                        true,
-                        false
-                    ],
-                    paint: {
-                        "line-color": "#deded8",
-                        "line-width": 1
-                    }
-                },
-                {
-                    id: "major-roads",
-                    type: "line",
-                    source: "openmaptiles",
-                    "source-layer": "transportation",
-                    filter: [
-                        "match",
-                        ["get", "class"],
-                        ["motorway", "trunk", "primary", "secondary"],
-                        true,
-                        false
-                    ],
-                    paint: {
-                        "line-color": "#aaa9a3",
-                        "line-width": 2
-                    }
-                },
-                {
-                    id: "road-labels",
-                    type: "symbol",
-                    source: "openmaptiles",
-                    "source-layer": "transportation_name",
-                    filter: [
-                        "match",
-                        ["get", "class"],
-                        ["motorway", "trunk", "primary", "secondary", "tertiary"],
-                        true,
-                        false
-                    ],
-                    layout: {
-                        "symbol-placement": "line",
-                        "text-field": ["get", "name"],
-                        "text-font": ["Noto Sans Regular"],
-                        "text-size": 12
-                    },
-                    paint: {
-                        "text-color": "#565652",
-                        "text-halo-color": "#faf9f4",
-                        "text-halo-width": 2
-                    }
-                }
-            ]
-        };
+            const number = document.createElement("span");
+            number.className = "legend-number";
+            number.textContent = index + 1;
+
+            const name = document.createElement("span");
+            name.className = "legend-name";
+            name.textContent = shul.name;
+
+            item.append(number, name);
+            shulList.appendChild(item);
+        });
 
         const map = new maplibregl.Map({
             container: "map",
-            style: printStyle,
+            style: "https://tiles.openfreemap.org/styles/liberty",
             interactive: false,
             canvasContextAttributes: {
                 preserveDrawingBuffer: true
             }
         });
+
+        const shulMarkers = [];
+
+        function layoutShulMarkers() {
+            if (shulMarkers.length === 0) {
+                return;
+            }
+
+            const container = map.getContainer();
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            const markerRadius = 14;
+            const minimumDistance = 30;
+            const edgePadding = markerRadius + 3;
+            const occupied = [];
+
+            // Try small offsets first. Only tightly clustered markers should move.
+            const candidateOffsets = [[0, 0]];
+            [8, 12, 16, 20, 24, 28, 32, 40, 48, 56, 64].forEach(radius => {
+                for (let angle = 0; angle < 360; angle += 30) {
+                    const radians = angle * Math.PI / 180;
+                    candidateOffsets.push([
+                        Math.round(Math.cos(radians) * radius),
+                        Math.round(Math.sin(radians) * radius)
+                    ]);
+                }
+            });
+
+            shulMarkers.forEach(entry => {
+                const point = map.project([entry.shul.long, entry.shul.lat]);
+                let chosen = candidateOffsets[candidateOffsets.length - 1];
+
+                for (const offset of candidateOffsets) {
+                    const x = point.x + offset[0];
+                    const y = point.y + offset[1];
+
+                    const insideMap =
+                        x >= edgePadding && x <= width - edgePadding &&
+                        y >= edgePadding && y <= height - edgePadding;
+
+                    const clearOfMarkers = occupied.every(other =>
+                        Math.hypot(x - other.x, y - other.y) >= minimumDistance
+                    );
+
+                    if (insideMap && clearOfMarkers) {
+                        chosen = offset;
+                        break;
+                    }
+                }
+
+                const [dx, dy] = chosen;
+                entry.bubble.style.transform = `translate(${dx}px, ${dy}px)`;
+
+                const distance = Math.hypot(dx, dy);
+                if (distance > 0) {
+                    entry.line.style.display = "block";
+                    entry.dot.style.display = "block";
+                    entry.line.style.width = `${distance}px`;
+                    entry.line.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
+                } else {
+                    entry.line.style.display = "none";
+                    entry.dot.style.display = "none";
+                }
+
+                occupied.push({
+                    x: point.x + dx,
+                    y: point.y + dy
+                });
+            });
+        }
+
+        function fitMapToEruv() {
+            map.resize();
+            map.fitBounds(eruvBounds, {
+                // A little safety margin keeps the full 5px boundary stroke visible.
+                padding: 22,
+                animate: false
+            });
+            layoutShulMarkers();
+            map.triggerRepaint();
+        }
 
         map.on("load", () => {
             map.addSource("eruv", {
@@ -187,6 +443,44 @@
                 }
             });
 
+            // Hide everything outside the eruv. The exterior rectangle is deliberately
+            // much larger than the visible map; the eruv ring acts as a transparent hole.
+            const west = eruvBounds.getWest();
+            const east = eruvBounds.getEast();
+            const south = eruvBounds.getSouth();
+            const north = eruvBounds.getNorth();
+            const outerRing = [
+                [west - 1, south - 1],
+                [east + 1, south - 1],
+                [east + 1, north + 1],
+                [west - 1, north + 1],
+                [west - 1, south - 1]
+            ];
+
+            map.addSource("outside-eruv", {
+                type: "geojson",
+                data: {
+                    type: "Feature",
+                    geometry: {
+                        type: "Polygon",
+                        coordinates: [
+                            outerRing,
+                            polygonCoordinates
+                        ]
+                    }
+                }
+            });
+
+            map.addLayer({
+                id: "outside-eruv-mask",
+                type: "fill",
+                source: "outside-eruv",
+                paint: {
+                    "fill-color": "#faf9f4",
+                    "fill-opacity": 1
+                }
+            });
+
             map.addLayer({
                 id: "eruv-boundary",
                 type: "line",
@@ -197,17 +491,73 @@
                 }
             });
 
-            const bounds = new maplibregl.LngLatBounds();
+            sortedShuls.forEach((shul, index) => {
+                const anchor = document.createElement("div");
+                anchor.className = "shul-marker-anchor";
 
-            polygonCoordinates.forEach(coord =>
-                bounds.extend(coord)
-            );
+                const line = document.createElement("span");
+                line.className = "shul-marker-line";
 
-            map.fitBounds(bounds, {
-                padding: 35,
-                animate: false
+                const dot = document.createElement("span");
+                dot.className = "shul-marker-dot";
+
+                const bubble = document.createElement("span");
+                bubble.className = "shul-marker-bubble";
+                bubble.textContent = index + 1;
+
+                anchor.append(line, dot, bubble);
+
+                const marker = new maplibregl.Marker({
+                    element: anchor,
+                    anchor: "center"
+                })
+                    .setLngLat([shul.long, shul.lat])
+                    .addTo(map);
+
+                shulMarkers.push({ shul, marker, line, dot, bubble });
             });
+
+            fitMapToEruv();
         });
+
+        function preparePrintLayout() {
+            // beforeprint normally fires before the print stylesheet has fully resized the
+            // WebGL canvas. Apply the print dimensions ourselves first, force layout, then
+            // resize/refit MapLibre. This also fixes Ctrl+P print preview.
+            document.documentElement.classList.add("printing");
+            void document.documentElement.offsetWidth;
+            fitMapToEruv();
+        }
+
+        function restoreScreenLayout() {
+            document.documentElement.classList.remove("printing");
+            requestAnimationFrame(fitMapToEruv);
+        }
+
+        function printMap() {
+            preparePrintLayout();
+
+            // Two animation frames allow the resized WebGL canvas to render before the
+            // browser captures it for print preview.
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => window.print());
+            });
+        }
+
+        window.addEventListener("beforeprint", preparePrintLayout);
+        window.addEventListener("afterprint", restoreScreenLayout);
+        window.addEventListener("resize", () => requestAnimationFrame(layoutShulMarkers));
+
+        const printMedia = window.matchMedia("print");
+        if (printMedia.addEventListener) {
+            printMedia.addEventListener("change", event => {
+                if (event.matches) {
+                    preparePrintLayout();
+                } else {
+                    restoreScreenLayout();
+                }
+            });
+        }
     </script>
 </body>
 
