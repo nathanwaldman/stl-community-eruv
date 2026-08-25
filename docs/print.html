@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>St. Louis Community Eruv — Printable Map</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css">
+    <script src="shuls.js"></script>
+
+    <style>
+        html,
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 20px;
+        }
+
+        #map {
+            width: 100%;
+            height: calc(100vh - 80px);
+        }
+
+        .print-button {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+        }
+
+        @page {
+            size: landscape;
+            margin: 0.3in;
+        }
+
+        @media print {
+            .print-button {
+                display: none;
+            }
+
+            #map {
+                height: 7in;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <button class="print-button" onclick="window.print()">
+        Print map
+    </button>
+
+    <h1>St. Louis Community Eruv</h1>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
+    <script src="eruv-boundary.js"></script>
+
+    <script>
+        const polygonCoordinates =
+            ERUV_BOUNDARY.map(([lat, lng]) => [lng, lat]);
+
+        // GeoJSON polygons must explicitly close the ring.
+        polygonCoordinates.push(polygonCoordinates[0]);
+
+        const printStyle = {
+            version: 8,
+
+            sources: {
+                openmaptiles: {
+                    type: "vector",
+                    url: "https://tiles.openfreemap.org/planet"
+                }
+            },
+
+            glyphs: "https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf",
+
+            layers: [
+                {
+                    id: "background",
+                    type: "background",
+                    paint: {
+                        "background-color": "#faf9f4"
+                    }
+                },
+                {
+                    id: "parks",
+                    type: "fill",
+                    source: "openmaptiles",
+                    "source-layer": "park",
+                    paint: {
+                        "fill-color": "#e8efe5"
+                    }
+                },
+                {
+                    id: "water",
+                    type: "fill",
+                    source: "openmaptiles",
+                    "source-layer": "water",
+                    paint: {
+                        "fill-color": "#dbeaf0"
+                    }
+                },
+                {
+                    id: "local-roads",
+                    type: "line",
+                    source: "openmaptiles",
+                    "source-layer": "transportation",
+                    filter: [
+                        "match",
+                        ["get", "class"],
+                        ["tertiary", "minor"],
+                        true,
+                        false
+                    ],
+                    paint: {
+                        "line-color": "#deded8",
+                        "line-width": 1
+                    }
+                },
+                {
+                    id: "major-roads",
+                    type: "line",
+                    source: "openmaptiles",
+                    "source-layer": "transportation",
+                    filter: [
+                        "match",
+                        ["get", "class"],
+                        ["motorway", "trunk", "primary", "secondary"],
+                        true,
+                        false
+                    ],
+                    paint: {
+                        "line-color": "#aaa9a3",
+                        "line-width": 2
+                    }
+                },
+                {
+                    id: "road-labels",
+                    type: "symbol",
+                    source: "openmaptiles",
+                    "source-layer": "transportation_name",
+                    filter: [
+                        "match",
+                        ["get", "class"],
+                        ["motorway", "trunk", "primary", "secondary", "tertiary"],
+                        true,
+                        false
+                    ],
+                    layout: {
+                        "symbol-placement": "line",
+                        "text-field": ["get", "name"],
+                        "text-font": ["Noto Sans Regular"],
+                        "text-size": 12
+                    },
+                    paint: {
+                        "text-color": "#565652",
+                        "text-halo-color": "#faf9f4",
+                        "text-halo-width": 2
+                    }
+                }
+            ]
+        };
+
+        const map = new maplibregl.Map({
+            container: "map",
+            style: printStyle,
+            interactive: false,
+            canvasContextAttributes: {
+                preserveDrawingBuffer: true
+            }
+        });
+
+        map.on("load", () => {
+            map.addSource("eruv", {
+                type: "geojson",
+                data: {
+                    type: "Feature",
+                    geometry: {
+                        type: "Polygon",
+                        coordinates: [polygonCoordinates]
+                    }
+                }
+            });
+
+            map.addLayer({
+                id: "eruv-boundary",
+                type: "line",
+                source: "eruv",
+                paint: {
+                    "line-color": "#001A33",
+                    "line-width": 5
+                }
+            });
+
+            const bounds = new maplibregl.LngLatBounds();
+
+            polygonCoordinates.forEach(coord =>
+                bounds.extend(coord)
+            );
+
+            map.fitBounds(bounds, {
+                padding: 35,
+                animate: false
+            });
+        });
+    </script>
+</body>
+
+</html>
