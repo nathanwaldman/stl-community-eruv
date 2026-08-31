@@ -112,6 +112,10 @@
             font-size: 14px;
         }
 
+        /*
+         * Each shul marker is anchored at the shul's exact geographic
+         * coordinate. The numbered bubble may be moved away from that point.
+         */
         .shul-marker-anchor {
             position: relative;
             width: 0;
@@ -119,34 +123,63 @@
             pointer-events: none;
         }
 
-        .shul-marker-line {
+        /*
+         * Curved callout between the exact shul location and a displaced
+         * numbered bubble.
+         */
+        .shul-marker-guide {
             position: absolute;
             left: 0;
-            top: -1px;
-            z-index: 0;
+            top: 0;
+            z-index: 3;
             display: none;
-            height: 2px;
-            background: #001a33;
-            transform-origin: left center;
+            overflow: visible;
+            pointer-events: none;
         }
 
+        /*
+         * White halo keeps the callout visible when it crosses roads,
+         * labels, or the dark eruv boundary.
+         */
+        .shul-marker-guide-halo {
+            fill: none;
+            stroke: #fff;
+            stroke-width: 8;
+            stroke-linecap: round;
+        }
+
+        /*
+         * Callouts deliberately use a different color than the eruv boundary.
+         */
+        .shul-marker-guide-path {
+            fill: none;
+            stroke: #0900b16c;
+            stroke-width: 2;
+            stroke-linecap: round;
+        }
+
+        /*
+         * This dot remains at the shul's exact geographic coordinate.
+         */
         .shul-marker-dot {
             position: absolute;
             left: -2px;
             top: -2px;
-            z-index: 1;
+            z-index: 4;
             display: none;
             width: 4px;
             height: 4px;
             border-radius: 50%;
-            background: #001a33;
+            background: #000a38;
+            box-shadow: 0 0 0 1px #fff;
+            box-sizing: border-box;
         }
 
         .shul-marker-bubble {
             position: absolute;
             left: -14px;
             top: -14px;
-            z-index: 2;
+            z-index: 5;
             display: flex;
             width: 28px;
             height: 28px;
@@ -163,7 +196,10 @@
             box-sizing: border-box;
         }
 
-        /* Applied before print preview opens so MapLibre can resize first. */
+        /*
+         * Applied before print preview opens so MapLibre can resize its
+         * WebGL canvas before Chrome or Firefox captures it.
+         */
         html.printing .print-sheet {
             width: 10.5in;
             height: 7.5in;
@@ -343,11 +379,25 @@
         const eruvBounds = new maplibregl.LngLatBounds();
         polygonCoordinates.forEach(coord => eruvBounds.extend(coord));
 
+        /*
+         * Sorting here also determines the number shown on each map marker.
+         *
+         * With the current shuls.js:
+         *   1 = Agudas Israel of St. Louis
+         *   4 = Congregation Bais Menachem
+         *   8 = Wash U Hillel
+         *   9 = Young Israel of St. Louis
+         *
+         * shuls.js gives those clustered/boundary-adjacent locations explicit
+         * printOffset values so their bubbles are separated and connected to
+         * their exact locations by curved callouts.
+         */
         const sortedShuls = [...window.SHULS].sort((a, b) =>
             a.name.localeCompare(b.name)
         );
 
         const shulList = document.querySelector("#shul-list");
+
         sortedShuls.forEach((shul, index) => {
             const item = document.createElement("li");
 
@@ -367,12 +417,112 @@
             container: "map",
             style: "https://tiles.openfreemap.org/styles/liberty",
             interactive: false,
+
+            /*
+             * Important for printing WebGL content. Without this, browsers may
+             * clear the backing canvas before print preview captures it.
+             */
             canvasContextAttributes: {
                 preserveDrawingBuffer: true
             }
         });
 
         const shulMarkers = [];
+
+        function hideMarkerGuide(entry) {
+            entry.guideSvg.style.display = "none";
+            entry.dot.style.display = "none";
+        }
+
+        /*
+         * Draw a quadratic Bézier curve from the exact shul location at
+         * (0, 0) to the center of the displaced numbered bubble at (dx, dy).
+         */
+        function showCurvedMarkerGuide(entry, dx, dy) {
+            const padding = 14;
+
+            const distance = Math.hypot(dx, dy);
+
+            if (distance === 0) {
+                hideMarkerGuide(entry);
+                return;
+            }
+
+            /*
+             * Bend the line perpendicular to the direct route between the
+             * point and bubble. The bend is intentionally modest so the
+             * callout is easy to follow.
+             */
+            const perpendicularX = -dy / distance;
+            const perpendicularY = dx / distance;
+
+            const curveAmount =
+                Math.max(10, Math.min(20, distance * 0.25));
+
+            /*
+             * Alternate the direction of the bend depending on the bubble's
+             * horizontal direction. This helps neighboring callouts separate
+             * visually rather than stacking on the same curve.
+             */
+            const bendDirection = dx >= 0 ? 1 : -1;
+
+            const controlX =
+                dx / 2 +
+                perpendicularX * curveAmount * bendDirection;
+
+            const controlY =
+                dy / 2 +
+                perpendicularY * curveAmount * bendDirection;
+
+            /*
+             * SVG viewBox coordinates need to include the start, end, and
+             * control point, plus room for the white halo.
+             */
+            const minX =
+                Math.min(0, dx, controlX) - padding;
+
+            const maxX =
+                Math.max(0, dx, controlX) + padding;
+
+            const minY =
+                Math.min(0, dy, controlY) - padding;
+
+            const maxY =
+                Math.max(0, dy, controlY) + padding;
+
+            const width = maxX - minX;
+            const height = maxY - minY;
+
+            const startX = -minX;
+            const startY = -minY;
+
+            const endX = dx - minX;
+            const endY = dy - minY;
+
+            const svgControlX = controlX - minX;
+            const svgControlY = controlY - minY;
+
+            const pathData =
+                `M ${startX} ${startY} ` +
+                `Q ${svgControlX} ${svgControlY} ${endX} ${endY}`;
+
+            entry.guideSvg.setAttribute(
+                "viewBox",
+                `0 0 ${width} ${height}`
+            );
+
+            entry.guideSvg.setAttribute("width", width);
+            entry.guideSvg.setAttribute("height", height);
+
+            entry.guideSvg.style.left = `${minX}px`;
+            entry.guideSvg.style.top = `${minY}px`;
+
+            entry.guideHalo.setAttribute("d", pathData);
+            entry.guidePath.setAttribute("d", pathData);
+
+            entry.guideSvg.style.display = "block";
+            entry.dot.style.display = "block";
+        }
 
         function layoutShulMarkers() {
             if (shulMarkers.length === 0) {
@@ -382,16 +532,25 @@
             const container = map.getContainer();
             const width = container.clientWidth;
             const height = container.clientHeight;
+
             const markerRadius = 14;
             const minimumDistance = 30;
             const edgePadding = markerRadius + 3;
+
             const occupied = [];
 
-            // Try small offsets first. Only tightly clustered markers should move.
+            /*
+             * For ordinary markers, try the true location first, then move
+             * outward only if another numbered circle would overlap it.
+             *
+             * Explicit printOffset values in shuls.js take precedence.
+             */
             const candidateOffsets = [[0, 0]];
+
             [8, 12, 16, 20, 24, 28, 32, 40, 48, 56, 64].forEach(radius => {
                 for (let angle = 0; angle < 360; angle += 30) {
                     const radians = angle * Math.PI / 180;
+
                     candidateOffsets.push([
                         Math.round(Math.cos(radians) * radius),
                         Math.round(Math.sin(radians) * radius)
@@ -400,39 +559,56 @@
             });
 
             shulMarkers.forEach(entry => {
-                const point = map.project([entry.shul.long, entry.shul.lat]);
-                let chosen = candidateOffsets[candidateOffsets.length - 1];
+                const point =
+                    map.project([entry.shul.long, entry.shul.lat]);
 
-                for (const offset of candidateOffsets) {
-                    const x = point.x + offset[0];
-                    const y = point.y + offset[1];
+                let chosen =
+                    candidateOffsets[candidateOffsets.length - 1];
 
-                    const insideMap =
-                        x >= edgePadding && x <= width - edgePadding &&
-                        y >= edgePadding && y <= height - edgePadding;
+                /*
+                 * Manually assigned offsets make the dense western cluster
+                 * and Wash U Hillel unambiguous.
+                 */
+                if (entry.shul.printOffset) {
+                    chosen = entry.shul.printOffset;
+                } else {
+                    for (const offset of candidateOffsets) {
+                        const x = point.x + offset[0];
+                        const y = point.y + offset[1];
 
-                    const clearOfMarkers = occupied.every(other =>
-                        Math.hypot(x - other.x, y - other.y) >= minimumDistance
-                    );
+                        const insideMap =
+                            x >= edgePadding &&
+                            x <= width - edgePadding &&
+                            y >= edgePadding &&
+                            y <= height - edgePadding;
 
-                    if (insideMap && clearOfMarkers) {
-                        chosen = offset;
-                        break;
+                        const clearOfMarkers = occupied.every(other =>
+                            Math.hypot(
+                                x - other.x,
+                                y - other.y
+                            ) >= minimumDistance
+                        );
+
+                        if (insideMap && clearOfMarkers) {
+                            chosen = offset;
+                            break;
+                        }
                     }
                 }
 
                 const [dx, dy] = chosen;
-                entry.bubble.style.transform = `translate(${dx}px, ${dy}px)`;
 
-                const distance = Math.hypot(dx, dy);
-                if (distance > 0) {
-                    entry.line.style.display = "block";
-                    entry.dot.style.display = "block";
-                    entry.line.style.width = `${distance}px`;
-                    entry.line.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
+                entry.bubble.style.transform =
+                    `translate(${dx}px, ${dy}px)`;
+
+                /*
+                 * Any bubble that has moved away from the exact coordinate
+                 * gets an exact-location dot and curved callout.
+                 */
+                if (dx !== 0 || dy !== 0) {
+                    showCurvedMarkerGuide(entry, dx, dy);
                 } else {
-                    entry.line.style.display = "none";
-                    entry.dot.style.display = "none";
+                    hideMarkerGuide(entry);
                 }
 
                 occupied.push({
@@ -444,11 +620,13 @@
 
         function fitMapToEruv() {
             map.resize();
+
             map.fitBounds(eruvBounds, {
-                // A little safety margin keeps the full 5px boundary stroke visible.
+                // Keep the full 5px boundary stroke visible.
                 padding: 22,
                 animate: false
             });
+
             layoutShulMarkers();
             map.triggerRepaint();
         }
@@ -465,12 +643,16 @@
                 }
             });
 
-            // Hide everything outside the eruv. The exterior rectangle is deliberately
-            // much larger than the visible map; the eruv ring acts as a transparent hole.
+            /*
+             * Hide everything outside the eruv. The exterior rectangle is
+             * deliberately much larger than the visible map; the eruv ring
+             * acts as a transparent hole.
+             */
             const west = eruvBounds.getWest();
             const east = eruvBounds.getEast();
             const south = eruvBounds.getSouth();
             const north = eruvBounds.getNorth();
+
             const outerRing = [
                 [west - 1, south - 1],
                 [east + 1, south - 1],
@@ -517,8 +699,45 @@
                 const anchor = document.createElement("div");
                 anchor.className = "shul-marker-anchor";
 
-                const line = document.createElement("span");
-                line.className = "shul-marker-line";
+                /*
+                 * SVG is used instead of CSS borders so the callout can be a
+                 * smooth curve and print consistently in Chrome and Firefox.
+                 */
+                const guideSvg = document.createElementNS(
+                    "http://www.w3.org/2000/svg",
+                    "svg"
+                );
+                guideSvg.setAttribute(
+                    "class",
+                    "shul-marker-guide"
+                );
+                guideSvg.setAttribute(
+                    "aria-hidden",
+                    "true"
+                );
+
+                const guideHalo = document.createElementNS(
+                    "http://www.w3.org/2000/svg",
+                    "path"
+                );
+                guideHalo.setAttribute(
+                    "class",
+                    "shul-marker-guide-halo"
+                );
+
+                const guidePath = document.createElementNS(
+                    "http://www.w3.org/2000/svg",
+                    "path"
+                );
+                guidePath.setAttribute(
+                    "class",
+                    "shul-marker-guide-path"
+                );
+
+                guideSvg.append(
+                    guideHalo,
+                    guidePath
+                );
 
                 const dot = document.createElement("span");
                 dot.className = "shul-marker-dot";
@@ -527,52 +746,172 @@
                 bubble.className = "shul-marker-bubble";
                 bubble.textContent = index + 1;
 
-                anchor.append(line, dot, bubble);
+                anchor.append(
+                    guideSvg,
+                    dot,
+                    bubble
+                );
 
                 const marker = new maplibregl.Marker({
                     element: anchor,
                     anchor: "center"
                 })
-                    .setLngLat([shul.long, shul.lat])
+                    .setLngLat([
+                        shul.long,
+                        shul.lat
+                    ])
                     .addTo(map);
 
-                shulMarkers.push({ shul, marker, line, dot, bubble });
+                shulMarkers.push({
+                    shul,
+                    marker,
+                    guideSvg,
+                    guideHalo,
+                    guidePath,
+                    dot,
+                    bubble
+                });
             });
 
             fitMapToEruv();
         });
 
+        /*
+         * Print handling
+         *
+         * Chrome and Firefox do not necessarily resize a WebGL canvas at the
+         * same point in their print-preview lifecycle. We therefore apply the
+         * print dimensions ourselves before calling window.print(), force a
+         * layout, resize/refit MapLibre, and allow the browser time to paint.
+         */
+        let printRestorePending = false;
+
         function preparePrintLayout() {
-            // beforeprint normally fires before the print stylesheet has fully resized the
-            // WebGL canvas. Apply the print dimensions ourselves first, force layout, then
-            // resize/refit MapLibre. This also fixes Ctrl+P print preview.
             document.documentElement.classList.add("printing");
+
+            // Force the browser to apply the print dimensions immediately.
             void document.documentElement.offsetWidth;
+
             fitMapToEruv();
         }
 
         function restoreScreenLayout() {
+            if (
+                !document.documentElement.classList.contains("printing")
+            ) {
+                return;
+            }
+
             document.documentElement.classList.remove("printing");
-            requestAnimationFrame(fitMapToEruv);
+
+            /*
+             * Allow the normal screen CSS dimensions to settle before
+             * resizing MapLibre back to them.
+             */
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    fitMapToEruv();
+                });
+            });
+        }
+
+        function queueRestoreAfterPrint() {
+            if (printRestorePending) {
+                return;
+            }
+
+            printRestorePending = true;
+
+            setTimeout(() => {
+                printRestorePending = false;
+
+                if (!document.hidden) {
+                    restoreScreenLayout();
+                }
+            }, 150);
         }
 
         function printMap() {
             preparePrintLayout();
 
-            // Two animation frames allow the resized WebGL canvas to render before the
-            // browser captures it for print preview.
+            let printStarted = false;
+
+            const startPrint = () => {
+                if (printStarted) {
+                    return;
+                }
+
+                printStarted = true;
+                window.print();
+            };
+
+            /*
+             * Two animation frames allow both CSS layout and the MapLibre
+             * canvas dimensions to settle.
+             */
             requestAnimationFrame(() => {
-                requestAnimationFrame(() => window.print());
+                requestAnimationFrame(() => {
+                    fitMapToEruv();
+
+                    /*
+                     * MapLibre's idle event is the preferred indication that
+                     * its resized WebGL frame is ready to capture.
+                     */
+                    if (map.loaded()) {
+                        map.once("idle", () => {
+                            setTimeout(startPrint, 120);
+                        });
+                    }
+
+                    /*
+                     * Fallback for browsers where the idle event is not fired
+                     * during this exact print lifecycle.
+                     */
+                    setTimeout(startPrint, 500);
+                });
             });
         }
 
-        window.addEventListener("beforeprint", preparePrintLayout);
-        window.addEventListener("afterprint", restoreScreenLayout);
-        window.addEventListener("resize", () => requestAnimationFrame(layoutShulMarkers));
+        /*
+         * beforeprint/afterprint work in current Chrome and Firefox.
+         */
+        window.addEventListener(
+            "beforeprint",
+            preparePrintLayout
+        );
 
+        window.addEventListener(
+            "afterprint",
+            restoreScreenLayout
+        );
+
+        window.addEventListener(
+            "resize",
+            () => requestAnimationFrame(layoutShulMarkers)
+        );
+
+        /*
+         * matchMedia("print") provides another path for browsers whose
+         * beforeprint/afterprint timing differs.
+         */
         const printMedia = window.matchMedia("print");
+
         if (printMedia.addEventListener) {
-            printMedia.addEventListener("change", event => {
+            printMedia.addEventListener(
+                "change",
+                event => {
+                    if (event.matches) {
+                        preparePrintLayout();
+                    } else {
+                        restoreScreenLayout();
+                    }
+                }
+            );
+        } else if (printMedia.addListener) {
+            /*
+             * Older Firefox compatibility.
+             */
+            printMedia.addListener(event => {
                 if (event.matches) {
                     preparePrintLayout();
                 } else {
@@ -580,6 +919,25 @@
                 }
             });
         }
+
+        /*
+         * Some browser/OS combinations restore focus or visibility after
+         * print preview without reliably firing afterprint. These are
+         * harmless fallback cleanup paths.
+         */
+        window.addEventListener(
+            "focus",
+            queueRestoreAfterPrint
+        );
+
+        document.addEventListener(
+            "visibilitychange",
+            () => {
+                if (!document.hidden) {
+                    queueRestoreAfterPrint();
+                }
+            }
+        );
     </script>
 </body>
 
